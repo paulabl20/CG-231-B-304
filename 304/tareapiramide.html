@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PIRAMIDE en 3D</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+		canvas {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r94/three.min.js"></script>
+
+    <script type="module">
+    import { OrbitControls } from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js';
+
+		// Crear la escena
+		const scene = new THREE.Scene();
+
+		// Crear la cámara
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera.position.z = 10;
+
+		// Crear el renderizador
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+        // Crear los ejes principales XYZ
+const ejes = new THREE.AxesHelper(5);
+scene.add(ejes);
+
+// Crear la geometría de malla para el plano XZ
+const geometriaPlano = new THREE.PlaneGeometry(20, 20, 20, 20);
+const materialPlano = new THREE.MeshBasicMaterial({color: 0x333333, wireframe: true});
+const plano = new THREE.Mesh(geometriaPlano, materialPlano);
+plano.rotation.x = -Math.PI / 2;
+scene.add(plano);
+// Crear la luz ambiental
+const luzAmbiental = new THREE.AmbientLight(0x404040);
+scene.add(luzAmbiental);
+
+// Crear la luz direccional
+const luzDireccional = new THREE.DirectionalLight(0xffffff, 0.5);
+luzDireccional.position.set(0, 1, 1);
+scene.add(luzDireccional);
+
+
+// Añadir OrbitControls para desplazar la cámara
+var orbitControls = new OrbitControls(camera, renderer.domElement);
+// Renderizar la escena
+function render() {
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+}
+//FUNCIONES DE LA FIGURA
+        
+function POLIGONO(vx){
+            var FIGURA = new THREE.Geometry();
+            var largoV = vx.length;
+            for (var i = 0; i < largoV; i++){
+            var [x,y,z]=[vx[i][0],vx[i][1],vx[i][2]]
+                var vector = new THREE.Vector3(x, y, z);
+                FIGURA.vertices.push(vector);
+            }
+        return FIGURA;
+        }
+
+        function Poligono(NLADOS,LADOSIGUALES,ALTURA){
+            const P=[];
+            const F = (2*Math.PI)/NLADOS;
+
+            for(let i=0; i<=NLADOS; i++){
+                let x = LADOSIGUALES*Math.cos(i*F);
+                let y = ALTURA;
+                let z = LADOSIGUALES*Math.sin(i*F);
+                //(x,y,0);
+                P[i] = [x,y,z];
+            }
+            return P;
+        }
+
+        //CREACION DE LA FIGURA GEOMETRIA
+        const ancho = 2;
+        const lado = 6;
+        const alto =4;
+        const base = 2;
+
+        function POLIGONO1(lado, ancho, alto,base){
+        
+            const material = new THREE.MeshBasicMaterial({color : 0x78FF00});
+
+            const v1 = Poligono(lado,ancho*base,0);
+            const g1 = POLIGONO(v1);
+            const f1 = new THREE.Line(g1, material);
+    
+            const v2 = Poligono(lado,ancho,alto);
+            const g2 = POLIGONO(v2);
+            const f2 = new THREE.Line(g2, material);
+
+
+            const vertices=[];
+            for(let i=0; i<=lado; i++){
+                vertices[0]= v1[i];
+                vertices[1]= v2[i];
+                const geometria = POLIGONO(vertices);
+                const figura = new THREE.Line(geometria, material);
+                scene.add(figura);
+            }
+
+
+            scene.add(f1);
+            scene.add(f2);
+        }
+
+        POLIGONO1(lado,ancho,alto,base);
+
+render();
+
+
+</script>
+</body>
+</html>
